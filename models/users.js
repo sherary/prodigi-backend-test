@@ -34,22 +34,10 @@ module.exports = (sequelize, DataTypes) => {
 
     wishlist: {
       type: DataTypes.STRING,
-      get: () => {
-        return JSON.parse(this.getDataValue('wishlist'));
-      },
-      set: (value) => {
-        return this.setDataValue('wishlist'), JSON.stringify(value)
-      }
     },
 
     view_history: {
       type: DataTypes.STRING,
-      get: () => {
-        return JSON.parse(this.getDataValue('view_history'));
-      },
-      set: (value) => {
-        return this.setDataValue('view_history'), JSON.stringify(value)
-      }
     },
   }, {
     sequelize,
