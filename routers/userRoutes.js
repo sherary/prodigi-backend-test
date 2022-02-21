@@ -11,9 +11,6 @@ router.get('/all', UserController.all);
 //get one user
 router.get('/one/:user_id', UserController.one);
 
-//user profile
-router.get('/profile/:user_id', UserController.own);
-
 //update user by id
 router.put('/update/:user_id', UserController.update);
 

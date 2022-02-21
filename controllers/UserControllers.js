@@ -68,17 +68,6 @@ const UserController = class {
         }
     }
 
-    async own (req, res) {
-        try {
-            console.log(req.body)
-        } catch (err) {
-            return res.status(500).json({
-                status: 'Fail',
-                message: 'Get own profile failed'
-            })
-        }
-    }
-
     async update (req, res) {
         try {
             await Users.update({
