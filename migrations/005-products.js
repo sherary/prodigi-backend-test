@@ -60,13 +60,7 @@ module.exports = {
       },
 
       images: {
-        type: Sequelize.STRING,
-        get() {
-          return this.getDataValue('images').split(';')
-        },
-        set(value) {
-          this.setDataValue('images', value.join(';'));
-        },
+        type: Sequelize.BLOB("long"),
       },
 
       createdAt: {

@@ -49,13 +49,7 @@ module.exports = (sequelize, DataTypes) => {
     },
 
     images: {
-      type: DataTypes.STRING,
-      get() {
-        return this.getDataValue('images').split(';')
-      },
-      set(value) {
-        this.setDataValue('images', value.join(';'));
-      },
+      type: DataTypes.BLOB("long"),
     }
   }, {
     sequelize,

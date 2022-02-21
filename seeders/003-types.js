@@ -5,7 +5,7 @@ let data = []
 for (let i = 0; i < 10; i++) {
     data.push({
         id: data.length + 1,
-        name: faker.commerce.productAdjective(),
+        name: faker.commerce.product(),
         createdAt: moment(Date.now()).format('YYYY-MM-DD HH:mm:ss'),
         updatedAt: moment(Date.now()).format('YYYY-MM-DD HH:mm:ss')
     })

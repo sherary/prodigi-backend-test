@@ -19,13 +19,7 @@ module.exports = {
       },
 
       logo: {
-        type: Sequelize.STRING,
-        get() {
-          return this.getDataValue('logo').split(';')
-        },
-        set(value) {
-          this.setDataValue('logo', value.join(';'));
-        },
+        type: Sequelize.BLOB("long"),
       },
 
       createdAt: {

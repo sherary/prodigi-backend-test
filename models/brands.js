@@ -22,13 +22,7 @@ module.exports = (sequelize, DataTypes) => {
     },
 
     logo: {
-      type: DataTypes.BLOB,
-      get() {
-        return this.getDataValue('logo').split(';')
-      },
-      set(value) {
-        this.setDataValue('logo', value.join(';'));
-      },
+      type: DataTypes.BLOB("long"),
     }
   }, {
     sequelize,
