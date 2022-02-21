@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const db = require('./models');
 const userRoutes = require('./routers/userRoutes');
+const adminRoutes = require('./routers/adminRoutes');
 require('dotenv').config();
 
 const PORT = process.env.PORT;
@@ -9,6 +10,7 @@ const PORT = process.env.PORT;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/users', userRoutes);
+app.use('/admins', adminRoutes);
 
 db.sequelize.sync().then(() => {
     console.log(`Database connected!`);
