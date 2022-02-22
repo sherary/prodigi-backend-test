@@ -69,10 +69,7 @@ const BrandController = class {
 
     async update (req, res) {
         try {
-            await Brands.update({
-                name: req.body.name,
-                description: req.body.description,
-            }, { 
+            await Brands.update({...req.body}, { 
                 where: {
                     id: req.params
                 }
@@ -132,6 +129,7 @@ const BrandController = class {
         } catch (err) {
             console.log(err)
             return res.status(500).json({
+                status: 'Fail',
                 message: 'Delete brand failed'
             })
         }

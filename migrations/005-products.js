@@ -48,7 +48,6 @@ module.exports = {
       price: {
         type: Sequelize.DECIMAL,
         allowNull: false,
-        default: 0
       },
 
       views: {
