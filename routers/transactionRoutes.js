@@ -10,3 +10,5 @@ router.get('/one', TransactionController.one);
 
 //view all transactions
 router.get('/all', TransactionController.all);
+
+module.exports = router;

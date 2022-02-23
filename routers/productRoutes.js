@@ -11,8 +11,13 @@ router.get('/one', ProductController.one);
 // view all product
 router.get('/all', ProductController.all);
 
+// search product by name
+router.get('/search', ProductController.searchBy)
+
 // update one product by id
 router.put('/update/:product_id', ProductController.update);
 
 // delete one product by id
 router.delete('/delete/:product_id', ProductController.delete);
+
+module.exports = router;

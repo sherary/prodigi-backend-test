@@ -1,4 +1,5 @@
-const { Products } = require('../models');
+const { QueryTypes } = require('sequelize');
+const { Products, sequelize } = require('../models');
 
 const ProductController = class {
     async create (req, res) {
@@ -48,6 +49,75 @@ const ProductController = class {
             return res.status(500).json({
                 status: 'Fail',
                 message: 'Fetching one product by ID failed'
+            })
+        }
+    }
+
+    async searchBy (req, res) {
+        try {
+            const product = 'p.title'
+            const type = 't.name'
+            const brand = 'b.name'
+            const price = 'p.price'
+            const discount = 'tr.discount'
+            let string = ''
+            let keyword = ''
+
+            if (req.query) {
+                if (req.query.title) {
+                    string = product
+                    keyword = req.query.title
+                }
+    
+                if (req.query.brand) {
+                    string = brand
+                    keyword = req.query.brand
+                }
+    
+                if (req.query.type) {
+                    string = type
+                    keyword = req.query.type
+                }
+
+                if (req.query.price) {
+                    string = price
+                    keyword = +req.query.price
+                }
+
+                if (req.query.discount) {
+                    string = discount
+                    keyword = +req.query.discount
+                }
+
+                let fixedKeyword = typeof keyword == 'string' ? `%${keyword}%` : keyword
+                let query = `SELECT p.id, p.title, p.description, t.name AS type, b.name brand_name, p.price, tr.discount, p.views, p.wishlisted, p.images FROM Products p 
+                LEFT JOIN Types t ON t.id = p.type_id LEFT JOIN Brands b ON b.id = p.brand_id LEFT JOIN Transactions tr ON tr.product_id = p.id
+                WHERE ${string} LIKE ${fixedKeyword};`
+                
+                await sequelize.query(query, {
+                    type: QueryTypes.SELECT
+                })
+                    .then((data) => {
+                        console.log(data, req.query)
+                        return res.status(200).json({
+                            status: 'Success finding product by name',
+                            message: `${data.length} products found for ${keyword}`,
+                            data: data
+                        })
+                    })
+            } else {
+                await Products.findAll({ raw: true })
+                    .then((data) => {
+                        return res.status(200).json({
+                            status: 'No result',
+                            message: `${data.length} products found for ${keyword}`,
+                            data: data
+                        })
+                    })
+            }
+        } catch (error) {
+            return res.status(500).json({
+                message: 'Failed to find product by name'
             })
         }
     }
