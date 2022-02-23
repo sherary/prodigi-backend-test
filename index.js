@@ -6,6 +6,7 @@ const adminRoutes = require('./routers/adminRoutes');
 const typeRoutes = require('./routers/typeRoutes');
 const brandRoutes = require('./routers/brandRoutes');
 const productRoutes = require('./routers/productRoutes');
+const transactionRoutes = require('./routers/transactionRoutes');
 require('dotenv').config();
 
 const PORT = process.env.PORT;
@@ -17,6 +18,7 @@ app.use('/admins', adminRoutes);
 app.use('/types', typeRoutes);
 app.use('/brands', brandRoutes);
 app.use('/products', productRoutes);
+app.use('/transactions', transactionRoutes);
 
 db.sequelize.sync().then(() => {
     console.log(`Database connected!`);
