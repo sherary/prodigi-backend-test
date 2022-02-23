@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
+const ValidateUserInput = require('../middlewares/users')
 const UserController = require('../controllers/UserControllers');
 
 //create new user
-router.post('/register', UserController.register);
+router.post('/register', ValidateUserInput.ValidateUser, UserController.register);
 
 //get all users
 router.get('/all', UserController.all);

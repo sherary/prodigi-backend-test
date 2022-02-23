@@ -24,7 +24,6 @@ exports.ValidateUser = async (req, res, next) => {
             raw: true
         })
             .then((data) => {
-                console.log(data)
                 if (data) {
                     return res.status(400).json({
                         status: 'Fail',
