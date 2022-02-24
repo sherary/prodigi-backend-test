@@ -1,3 +1,4 @@
+const paginate = require('../helpers/paginate');
 const { Brands } = require('../models');
 
 const BrandController = class {
@@ -32,11 +33,12 @@ const BrandController = class {
 
     async all (req, res) {
         try {
-            const brand = await Brands.findAll({ raw: true })
+            const brands = await Brands.findAll({ raw: true })
+            
             return res.status(200).json({
                 status: 'Success',
                 message: 'Fetching all brand success!',
-                data: brand
+                data: paginate(brands, req.query.page)
             })
         } catch (err) {
             return res.status(500).json({

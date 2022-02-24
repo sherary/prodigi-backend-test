@@ -1,3 +1,4 @@
+const paginate = require('../helpers/paginate');
 const { Admins } = require('../models');
 
 const AdminController = class {
@@ -34,10 +35,11 @@ const AdminController = class {
     async all (req, res) {
         try {
             const users = await Admins.findAll({ raw: true })
+
             return res.status(200).json({
                 status: 'Success',
                 message: 'Fetching all admins success!',
-                data: users
+                data: paginate(users, req.query.page)
             })
         } catch (err) {
             return res.status(500).json({

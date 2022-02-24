@@ -6,10 +6,10 @@ const AdminController = require('../controllers/AdminControllers');
 router.post('/register', AdminController.register);
 
 //get all admins
-router.get('/all', AdminController.all);
+router.get('/', AdminController.all);
 
 //get one admin
-router.get('/one/:admin_id', AdminController.one);
+router.get('/:admin_id', AdminController.one);
 
 //update admin by id
 router.put('/update/:admin_id', AdminController.update);

@@ -7,10 +7,10 @@ const UserController = require('../controllers/UserControllers');
 router.post('/register', ValidateUserInput.ValidateUser, UserController.register);
 
 //get all users
-router.get('/all', UserController.all);
+router.get('/', UserController.all);//ex for pagination: http://localhost:3000/users/?page=1
 
 //get one user
-router.get('/one/:user_id', UserController.one);
+router.get('/:user_id', UserController.one);
 
 //update user by id
 router.put('/update/:user_id', UserController.update);

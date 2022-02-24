@@ -1,3 +1,4 @@
+const paginate = require('../helpers/paginate');
 const { Transactions } = require('../models');
 
 const TransactionController = class {
@@ -55,10 +56,11 @@ const TransactionController = class {
     async all (req, res) {
         try {
             const transactions = await Transactions.findAll({ raw: true })
+            
             return res.status(200).json({
                 status: 'Success',
                 message: 'Fetching all transactions success!',
-                data: transactions
+                data: paginate(transactions, req.query.page)
             })
         } catch (error) {
             return res.status(500).json({

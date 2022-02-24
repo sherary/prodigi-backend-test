@@ -1,4 +1,5 @@
 const { Users } = require('../models');
+const paginate = require('../helpers/paginate');
 
 const UserController = class {
     async register (req, res) {
@@ -34,12 +35,14 @@ const UserController = class {
     async all (req, res) {
         try {
             const users = await Users.findAll({ raw: true })
+
             return res.status(200).json({
                 status: 'Success',
                 message: 'Fetching all users success!',
-                data: users
+                data: paginate(users, req.query.page)
             })
         } catch (err) {
+            console.log(err)
             return res.status(500).json({
                 status: 'Fail',
                 message: 'Get all users failed'

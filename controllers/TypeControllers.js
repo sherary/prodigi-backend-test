@@ -1,3 +1,4 @@
+const paginate = require('../helpers/paginate');
 const { Types } = require('../models');
 
 const TypeController = class {
@@ -33,10 +34,11 @@ const TypeController = class {
     async all (req, res) {
         try {
             const types = await Types.findAll({ raw: true })
+            
             return res.status(200).json({
                 status: 'Success',
                 message: 'Fetching all types success!',
-                data: types
+                data: paginate(types, req.query.page)
             })
         } catch (err) {
             return res.status(500).json({

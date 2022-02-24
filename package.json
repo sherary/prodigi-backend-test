@@ -18,7 +18,7 @@
   "scripts": {
     "test": "NODE_ENV=test",
     "start": "NODE_ENV=development nodemon index.js",
-    "dev": "NODE_ENV=developemnt node index.js"
+    "dev": "NODE_ENV=development node index.js"
   },
   "repository": {
     "type": "git",

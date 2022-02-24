@@ -1,15 +1,15 @@
 const express = require('express');
 const router = express.Router();
-const BrandController = require('../controllers/TypeControllers');
+const BrandController = require('../controllers/BrandControllers');
 
 //create new product
 router.post('/create', BrandController.create);
 
 //get all products
-router.get('/all', BrandController.all);
+router.get('/', BrandController.all);
 
 //get one product
-router.get('/one/:brand_id', BrandController.one);
+router.get('/:brand_id', BrandController.one);
 
 //update product by id
 router.put('/update/:brand_id', BrandController.update);

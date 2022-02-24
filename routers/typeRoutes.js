@@ -6,10 +6,10 @@ const TypeController = require('../controllers/TypeControllers');
 router.post('/create', TypeController.create);
 
 //get all products
-router.get('/all', TypeController.all);
+router.get('/', TypeController.all);
 
 //get one product
-router.get('/one/:type_id', TypeController.one);
+router.get('/:type_id', TypeController.one);
 
 //update product by id
 router.put('/update/:type_id', TypeController.update);

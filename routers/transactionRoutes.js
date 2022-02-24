@@ -6,9 +6,9 @@ const TransactionController = require('../controllers/TransactionControllers');
 router.post('/create', TransactionController.create);
 
 //view one transaction
-router.get('/one', TransactionController.one);
+router.get('/:transaction_id', TransactionController.one);
 
 //view all transactions
-router.get('/all', TransactionController.all);
+router.get('/', TransactionController.all);
 
 module.exports = router;

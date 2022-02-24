@@ -1,4 +1,5 @@
 const { QueryTypes } = require('sequelize');
+const paginate = require('../helpers/paginate');
 const { Products, sequelize } = require('../models');
 
 const ProductController = class {
@@ -81,24 +82,24 @@ const ProductController = class {
 
                 if (req.query.price) {
                     string = price
-                    keyword = +req.query.price
+                    keyword = req.query.price
                 }
 
                 if (req.query.discount) {
                     string = discount
-                    keyword = +req.query.discount
+                    keyword = req.query.discount
                 }
 
-                let fixedKeyword = typeof keyword == 'string' ? `%${keyword}%` : keyword
+                // let fixedKeyword = typeof keyword == 'string' ? `%${keyword}%` : keyword
                 let query = `SELECT p.id, p.title, p.description, t.name AS type, b.name brand_name, p.price, tr.discount, p.views, p.wishlisted, p.images FROM Products p 
                 LEFT JOIN Types t ON t.id = p.type_id LEFT JOIN Brands b ON b.id = p.brand_id LEFT JOIN Transactions tr ON tr.product_id = p.id
-                WHERE ${string} LIKE ${fixedKeyword};`
+                WHERE ${string} LIKE '%${keyword}%';`
                 
                 await sequelize.query(query, {
                     type: QueryTypes.SELECT
                 })
                     .then((data) => {
-                        console.log(data, req.query)
+                        // console.log(data, req.query)
                         return res.status(200).json({
                             status: 'Success finding product by name',
                             message: `${data.length} products found for ${keyword}`,
@@ -116,6 +117,7 @@ const ProductController = class {
                     })
             }
         } catch (error) {
+            // console.log(error)
             return res.status(500).json({
                 message: 'Failed to find product by name'
             })
@@ -125,10 +127,11 @@ const ProductController = class {
     async all (req, res) {
         try {
             const products = await Products.findAll({ raw: true })
+            
             return res.status(200).json({
                 status: 'Success',
                 message: 'Fetching all products success!',
-                data: products
+                data: paginate(products, req.query.page)
             })
         } catch (error) {
             return res.status(500).json({
