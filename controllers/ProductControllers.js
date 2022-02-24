@@ -34,19 +34,29 @@ const ProductController = class {
 
     async one (req, res) {
         try {
-            const product = await Products.findOne({
+            Products.findOne({
                 where: {
-                    id: req.params
+                    id: req.params.product_id
                 },
                 raw: true,
             })
-
-            return res.status(200).json({
-                status: 'Success',
-                message: 'Fetching product by ID success!',
-                data: product
-            })
+                .then((data) => {
+                    Products.update({
+                        views: data.views + 1,
+                    }, {
+                        where: {
+                            id: data.id
+                        }
+                    })
+                    data["views"] = data.views + 1
+                    return res.status(200).json({
+                        status: 'Success',
+                        message: 'Get product details',
+                        data: data
+                    })
+                })
         } catch (error) {
+            console.log(error)
             return res.status(500).json({
                 status: 'Fail',
                 message: 'Fetching one product by ID failed'
