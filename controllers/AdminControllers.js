@@ -16,11 +16,19 @@ const AdminController = class {
                 },
                 raw: true
             })
-                .then((result) => {
+                .then((data) => {
+                    await Admins.update({
+                        online: true
+                    }, {
+                        where: {
+                            id: data.id
+                        }
+                    })
+
                     return res.status(200).json({
                         status: 'Success',
                         message: 'Register success!',
-                        data: result
+                        data: data
                     })
                 })
         } catch (err) {
@@ -57,6 +65,14 @@ const AdminController = class {
             raw: true,
         })
 
+        await Admins.update({
+            online: true,
+        }, {
+            where: {
+                username: req.user.username
+            }
+        })
+
         return res.status(200).json({
             message: 'Success logging in',
             data: user,
@@ -65,6 +81,14 @@ const AdminController = class {
     }
 
     async logout (req, res) {
+        await Admins.update({
+            online: false,
+        }, {
+            where: {
+                username: req.user.username
+            }
+        })
+
         return res.status(200).json({
             message: 'Success logging out',
         })

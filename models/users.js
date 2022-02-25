@@ -32,6 +32,16 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
     },
 
+    role_id: {
+      type: DataTypes.BIGINT,
+      allowNull: false,
+      defaultValue: 1,
+    },
+
+    online: {
+      type: DataTypes.BOOLEAN,
+    },
+
     wishlist: {
       type: DataTypes.STRING,
     },

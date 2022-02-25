@@ -26,11 +26,19 @@ const UserController = class {
                         expiresIn: 60 * 60 * 24
                     });
 
+                    await Users.update({
+                        online: true,
+                    }, {
+                        where: {
+                            id: data.id
+                        }
+                    })
+
                     return res.status(200).json({
                         status: 'Success',
                         message: 'Register success!',
-                        token: token,
                         data: data,
+                        token: token,
                     })
                 })
         } catch (err) {
@@ -49,6 +57,14 @@ const UserController = class {
             raw: true,
         })
 
+        await Users.update({
+            online: true,
+        }, {
+            where: {
+                username: req.user.username
+            }
+        })
+
         return res.status(200).json({
             message: 'Success logging in',
             data: user,
@@ -57,6 +73,14 @@ const UserController = class {
     }
 
     async logout (req, res) {
+        await Users.update({
+            online: false,
+        }, {
+            where: {
+                username: req.user.username
+            }
+        })
+            
         return res.status(200).json({
             message: 'Success logging out',
         })

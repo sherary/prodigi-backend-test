@@ -29,6 +29,20 @@ module.exports = {
         allowNull: false,
       },
 
+      role_id: {
+        type: Sequelize.BIGINT,
+        allowNull: false,
+        default: 1,
+        references: {
+          model: 'Roles',
+          key: 'id'
+        },
+      },
+
+      online: {
+        type: Sequelize.BOOLEAN,
+      },
+
       wishlist: {
         type: Sequelize.STRING
       },

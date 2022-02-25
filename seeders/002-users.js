@@ -10,6 +10,8 @@ for (let i = 0; i < 100; i++) {
         email: faker.internet.email(),
         username: faker.internet.userName(firstname),
         password: faker.internet.password(),
+        role_id: 1,
+        online: faker.datatype.boolean(),
         createdAt: moment(Date.now()).format('YYYY-MM-DD HH:mm:ss'),
         updatedAt: moment(Date.now()).format('YYYY-MM-DD HH:mm:ss')
     })
