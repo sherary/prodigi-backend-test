@@ -6,7 +6,7 @@ const ProductController = require('../controllers/ProductControllers');
 router.post('/create', ProductController.create);
 
 // view one product
-router.get('/:product_id', ProductController.one);
+router.get('/id/:product_id', ProductController.one);
 
 // view all product
 router.get('/', ProductController.all);

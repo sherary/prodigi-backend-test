@@ -9,7 +9,7 @@ router.post('/create', TypeController.create);
 router.get('/', TypeController.all);
 
 //get one product
-router.get('/:type_id', TypeController.one);
+router.get('/id/:type_id', TypeController.one);
 
 //update product by id
 router.put('/update/:type_id', TypeController.update);

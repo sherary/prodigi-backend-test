@@ -10,7 +10,7 @@ router.post('/register', ValidateUserInput.ValidateUser, UserController.register
 router.get('/', UserController.all);//ex for pagination: http://localhost:3000/users/?page=1
 
 //get one user
-router.get('/:user_id', UserController.one);
+router.get('/id/:user_id', UserController.one);
 
 //update user by id
 router.put('/update/:user_id', UserController.update);

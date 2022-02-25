@@ -9,7 +9,7 @@ router.post('/register', AdminController.register);
 router.get('/', AdminController.all);
 
 //get one admin
-router.get('/:admin_id', AdminController.one);
+router.get('/id/:admin_id', AdminController.one);
 
 //update admin by id
 router.put('/update/:admin_id', AdminController.update);

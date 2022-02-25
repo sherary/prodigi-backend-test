@@ -1,29 +1,34 @@
-const { QueryTypes } = require('sequelize');
+const {
+    QueryTypes
+} = require('sequelize');
 const paginate = require('../helpers/paginate');
-const { Products, sequelize } = require('../models');
+const {
+    Products,
+    sequelize
+} = require('../models');
 
 const ProductController = class {
-    async create (req, res) {
+    async create(req, res) {
         try {
             let product_id = ''
-        await Products.create(req.body)
-            .then((data) => {
-                product_id = data.id
-            })
-        
-        await Products.findOne({
-            where: {
-                id: product_id,
-            },
-            raw: true
-        })
-            .then((result) => {
-                return res.status(200).json({
-                    status: 'Success',
-                    message: 'Registering product success!',
-                    data: result
+            await Products.create(req.body)
+                .then((data) => {
+                    product_id = data.id
                 })
-            })
+
+            await Products.findOne({
+                    where: {
+                        id: product_id,
+                    },
+                    raw: true
+                })
+                .then((result) => {
+                    return res.status(200).json({
+                        status: 'Success',
+                        message: 'Registering product success!',
+                        data: result
+                    })
+                })
         } catch (error) {
             return res.status(500).json({
                 status: 'Fail',
@@ -32,14 +37,14 @@ const ProductController = class {
         }
     }
 
-    async one (req, res) {
+    async one(req, res) {
         try {
             Products.findOne({
-                where: {
-                    id: req.params.product_id
-                },
-                raw: true,
-            })
+                    where: {
+                        id: req.params.product_id
+                    },
+                    raw: true,
+                })
                 .then((data) => {
                     Products.update({
                         views: data.views + 1,
@@ -64,158 +69,152 @@ const ProductController = class {
         }
     }
 
-    async searchBy (req, res) {
+    async searchBy(req, res) {
         try {
-            const product = 'p.title'
-            const type = 't.name'
-            const brand = 'b.name'
-            const price = 'p.price'
-            const discount = 'tr.discount'
-            let string = ''
-            let keyword = ''
+            const product = `WHERE p.title LIKE '%${req.query.title}%'`
+            const type = `WHERE t.name LIKE '%${req.query.type}%'`
+            const brand = `WHERE b.name LIKE '%${req.query.brand}%'`
+            const price = `WHERE p.price = ${Number(req.query.price)}`
+            const discount = `WHERE tr.discount = ${Number(req.query.discount)}`
+            let searchQuery = ''
 
-            if (req.query) {
+            if (Object.keys(req.query).length > 0) {
                 if (req.query.title) {
-                    string = product
-                    keyword = req.query.title
-                }
-    
-                if (req.query.brand) {
-                    string = brand
-                    keyword = req.query.brand
-                }
-    
+                    searchQuery = product
+                } 
                 if (req.query.type) {
-                    string = type
-                    keyword = req.query.type
+                    searchQuery = type
                 }
-
+                if (req.query.brand) {
+                    searchQuery = brand
+                }
                 if (req.query.price) {
-                    string = price
-                    keyword = req.query.price
+                    searchQuery = price
                 }
-
                 if (req.query.discount) {
-                    string = discount
-                    keyword = req.query.discount
+                    searchQuery = discount
                 }
 
-                // let fixedKeyword = typeof keyword == 'string' ? `%${keyword}%` : keyword
                 let query = `SELECT p.id, p.title, p.description, t.name AS type, b.name brand_name, p.price, tr.discount, p.views, p.wishlisted, p.images FROM Products p 
                 LEFT JOIN Types t ON t.id = p.type_id LEFT JOIN Brands b ON b.id = p.brand_id LEFT JOIN Transactions tr ON tr.product_id = p.id
-                WHERE ${string} LIKE '%${keyword}%';`
-                
+                ${searchQuery};`
+
                 await sequelize.query(query, {
-                    type: QueryTypes.SELECT
-                })
+                        type: QueryTypes.SELECT
+                    })
                     .then((data) => {
-                        // console.log(data, req.query)
                         return res.status(200).json({
                             status: 'Success finding product by name',
-                            message: `${data.length} products found for ${keyword}`,
-                            data: data
+                            message: `${data.length} products found for ${Object.values(req.query)}`,
+                            data: paginate(data, req.query.page)
                         })
                     })
             } else {
-                await Products.findAll({ raw: true })
+                await Products.findAll({
+                        raw: true
+                })
                     .then((data) => {
                         return res.status(200).json({
-                            status: 'No result',
-                            message: `${data.length} products found for ${keyword}`,
-                            data: data
+                            status: 'No query',
+                            message: `${data.length} products found`,
+                            data: paginate(data, req.query.page)
                         })
                     })
             }
-        } catch (error) {
-            // console.log(error)
-            return res.status(500).json({
-                message: 'Failed to find product by name'
-            })
-        }
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({
+            message: 'Failed to find product by name'
+        })
     }
+}
 
-    async all (req, res) {
-        try {
-            const products = await Products.findAll({ raw: true })
-            
-            return res.status(200).json({
-                status: 'Success',
-                message: 'Fetching all products success!',
-                data: paginate(products, req.query.page)
-            })
-        } catch (error) {
-            return res.status(500).json({
-                status: 'Fail',
-                message: 'Get all product failed'
-            })
-        }
+async all(req, res) {
+    try {
+        const products = await Products.findAll({
+            raw: true
+        })
+
+        return res.status(200).json({
+            status: 'Success',
+            message: 'Fetching all products success!',
+            data: paginate(products, req.query.page)
+        })
+    } catch (error) {
+        return res.status(500).json({
+            status: 'Fail',
+            message: 'Get all product failed'
+        })
     }
+}
 
-    async update (req, res) {
-        try {
-            await Products.update({...req.body}, {
+async update(req, res) {
+    try {
+        await Products.update({
+                ...req.body
+            }, {
                 where: {
                     id: req.params
                 }
             })
-                .then((result) => {
-                    if (result == 1) {
-                        Products.findOne({
+            .then((result) => {
+                if (result == 1) {
+                    Products.findOne({
                             where: {
                                 id: req.params
                             },
                             raw: true
                         })
-                            .then((data) => {
-                                return res.status(200).json({
-                                    status: 'Success',
-                                    message: 'Update products success!',
-                                    data: data
-                                })
+                        .then((data) => {
+                            return res.status(200).json({
+                                status: 'Success',
+                                message: 'Update products success!',
+                                data: data
                             })
-                    }
-                })
-        } catch (error) {
-            return res.status(500).json({
-                message: 'Update product failed'
+                        })
+                }
             })
-        }
+    } catch (error) {
+        return res.status(500).json({
+            message: 'Update product failed'
+        })
     }
+}
 
-    async delete (req, res) {
-        try {
-            await Products.findOne({
+async delete(req, res) {
+    try {
+        await Products.findOne({
                 where: {
                     id: req.params
                 },
                 raw: true
             })
-                .then((data) => {
-                    if (!data) {
-                        return res.status(404).json({
-                            status: 'Success',
-                            message: 'Product already deleted'
-                        })
-                    }
-
-                    Products.destroy({
-                        where: {
-                            id: req.params
-                        }
-                    })
-
-                    return res.status(200).json({
+            .then((data) => {
+                if (!data) {
+                    return res.status(404).json({
                         status: 'Success',
-                        message: 'Deleting product success'
+                        message: 'Product already deleted'
                     })
+                }
+
+                Products.destroy({
+                    where: {
+                        id: req.params
+                    }
                 })
-        } catch (err) {
-            return res.status(500).json({
-                status: 'Fail',
-                message: 'Delete product failed'
+
+                return res.status(200).json({
+                    status: 'Success',
+                    message: 'Deleting product success'
+                })
             })
-        }
+    } catch (err) {
+        return res.status(500).json({
+            status: 'Fail',
+            message: 'Delete product failed'
+        })
     }
+}
 }
 
 module.exports = new ProductController;

@@ -9,7 +9,7 @@ router.post('/create', BrandController.create);
 router.get('/', BrandController.all);
 
 //get one product
-router.get('/:brand_id', BrandController.one);
+router.get('/id/:brand_id', BrandController.one);
 
 //update product by id
 router.put('/update/:brand_id', BrandController.update);
