@@ -26,7 +26,7 @@ const UserController = class {
                         expiresIn: 60 * 60 * 24
                     });
 
-                    await Users.update({
+                    Users.update({
                         online: true,
                     }, {
                         where: {

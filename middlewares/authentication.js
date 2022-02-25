@@ -1,23 +1,25 @@
-const jwt = require('jsonwebtoken');
-require('dotenv').config();
-const SECRET = process.env.SECRET;
+const { Admins } = require('../models');
 
-exports.verifyUser = (req, res, next) => {
-    const token = req.headers["authorization"].split('Bearer ')[1]
-    if (!token) return res.status(401).json({
-        status: 'Unauthorized',
-        message: 'Token must be provided'
+exports.adminOnly = async (req, res, next) => {
+    const admin = await Admins.findOne({
+        where: {
+            username: req.user.username
+        },
+        raw: true,
     })
 
-    jwt.verify(token, SECRET, (err, user) => {
-        if (err) return res.status(500).json({ 
-            status: 'Unauthorized',
-            message: 'Failed to authorize token'
+    if (admin.username !== req.user.username) return res.status(422).json({
+        status: 'Fail',
+        message: 'Permission needed'
+    })
+
+    if (!admin) {
+        res.status(403).json({
+            status: 'Fail',
+            message: 'No admin account found'
         })
-
-        req.user = user
-        req.user["token"] = token
-
+    } else {
+        req.user["admin_id"] = admin.id
         next()
-    })
+    }
 }

@@ -1,5 +1,8 @@
 const paginate = require('../helpers/paginate');
 const { Admins } = require('../models');
+const jwt = require('jsonwebtoken');
+require('dotenv').config();
+const SECRET = process.env.SECRET
 
 const AdminController = class {
     async register (req, res) {
@@ -17,7 +20,11 @@ const AdminController = class {
                 raw: true
             })
                 .then((data) => {
-                    await Admins.update({
+                    const token = jwt.sign(req.body, SECRET, {
+                        expiresIn: 60 * 60 * 24
+                    });
+
+                    Admins.update({
                         online: true
                     }, {
                         where: {
@@ -28,7 +35,8 @@ const AdminController = class {
                     return res.status(200).json({
                         status: 'Success',
                         message: 'Register success!',
-                        data: data
+                        data: data,
+                        token: token
                     })
                 })
         } catch (err) {

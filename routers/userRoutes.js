@@ -2,16 +2,17 @@ const express = require('express');
 const router = express.Router();
 const ValidateUserInput = require('../middlewares/users')
 const UserController = require('../controllers/UserControllers');
-const Authentication = require('../middlewares/authentication')
+const Authorization = require('../middlewares/authorization')
+const Authentication = require('../middlewares/authentication');
 
 //create new user
 router.post('/register', ValidateUserInput.ValidateUser, UserController.register);
 
 // login with credentials
-router.post('/login', Authentication.verifyUser, UserController.login);
+router.post('/login', Authorization.verifyUser, UserController.login);
 
 // user logout
-router.post('/logout', Authentication.verifyUser, UserController.logout);
+router.post('/logout', Authorization.verifyUser, UserController.logout);
 
 //get all users
 router.get('/', UserController.all);//ex for pagination: http://localhost:3000/users/?page=1

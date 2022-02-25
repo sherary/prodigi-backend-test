@@ -1,11 +1,6 @@
-const {
-    QueryTypes
-} = require('sequelize');
+const { QueryTypes } = require('sequelize');
 const paginate = require('../helpers/paginate');
-const {
-    Products,
-    sequelize
-} = require('../models');
+const { Products, Admins, sequelize } = require('../models');
 
 const ProductController = class {
     async create(req, res) {
@@ -127,94 +122,146 @@ const ProductController = class {
             message: 'Failed to find product by name'
         })
     }
-}
-
-async all(req, res) {
-    try {
-        const products = await Products.findAll({
-            raw: true
-        })
-
-        return res.status(200).json({
-            status: 'Success',
-            message: 'Fetching all products success!',
-            data: paginate(products, req.query.page)
-        })
-    } catch (error) {
-        return res.status(500).json({
-            status: 'Fail',
-            message: 'Get all product failed'
-        })
     }
-}
 
-async update(req, res) {
-    try {
-        await Products.update({
-                ...req.body
-            }, {
-                where: {
-                    id: req.params
-                }
-            })
-            .then((result) => {
-                if (result == 1) {
-                    Products.findOne({
-                            where: {
-                                id: req.params
-                            },
-                            raw: true
-                        })
-                        .then((data) => {
-                            return res.status(200).json({
-                                status: 'Success',
-                                message: 'Update products success!',
-                                data: data
-                            })
-                        })
-                }
-            })
-    } catch (error) {
-        return res.status(500).json({
-            message: 'Update product failed'
-        })
-    }
-}
-
-async delete(req, res) {
-    try {
-        await Products.findOne({
-                where: {
-                    id: req.params
-                },
+    async all(req, res) {
+        try {
+            const products = await Products.findAll({
                 raw: true
             })
-            .then((data) => {
-                if (!data) {
-                    return res.status(404).json({
-                        status: 'Success',
-                        message: 'Product already deleted'
-                    })
-                }
 
-                Products.destroy({
+            return res.status(200).json({
+                status: 'Success',
+                message: 'Fetching all products success!',
+                data: paginate(products, req.query.page)
+            })
+        } catch (error) {
+            return res.status(500).json({
+                status: 'Fail',
+                message: 'Get all product failed'
+            })
+        }
+    }
+    
+    async mostWishlist (req, res) {
+        try {
+            const product = await Products.findAll({
+                where: {
+                    admin_id: req.user.admin_id
+                },
+                raw: true,
+                attributes: ['id', 'title', 'description', 'brand_id', 'type_id', 'price', 'views', 'wishlisted', 'images'],
+                order: [['wishlisted', 'DESC']],
+                limit: 1
+            })
+
+            return res.status(200).json({
+                status: 'Success',
+                message: 'Get most wishlisted item done',
+                data: product
+            })
+
+        } catch (error) {
+            return res.status(500).json({
+                status: 'Fail',
+                message: 'Failed to fetch most wishlisted item'
+            })
+        }
+    }
+
+    async mostWatched (req, res) {
+        try {
+            const product = await Products.findAll({
+                where: {
+                    admin_id: req.user.admin_id
+                },
+                raw: true,
+                attributes: ['id', 'title', 'description', 'brand_id', 'type_id', 'price', 'views', 'wishlisted', 'images'],
+                order: [['views', 'DESC']],
+                limit: 1
+            })
+
+            return res.status(200).json({
+                status: 'Success',
+                message: 'Get most viewed item done',
+                data: product
+            })
+
+        } catch (error) {
+            return res.status(500).json({
+                status: 'Fail',
+                message: 'Failed to fetch most wishlisted item'
+            })
+        }
+    }
+
+    async update(req, res) {
+        try {
+            await Products.update({
+                    ...req.body
+                }, {
                     where: {
                         id: req.params
                     }
                 })
-
-                return res.status(200).json({
-                    status: 'Success',
-                    message: 'Deleting product success'
+                .then((result) => {
+                    if (result == 1) {
+                        Products.findOne({
+                                where: {
+                                    id: req.params
+                                },
+                                raw: true
+                            })
+                            .then((data) => {
+                                return res.status(200).json({
+                                    status: 'Success',
+                                    message: 'Update products success!',
+                                    data: data
+                                })
+                            })
+                    }
                 })
+        } catch (error) {
+            return res.status(500).json({
+                message: 'Update product failed'
             })
-    } catch (err) {
-        return res.status(500).json({
-            status: 'Fail',
-            message: 'Delete product failed'
-        })
+        }
     }
-}
+
+    async delete(req, res) {
+        try {
+            await Products.findOne({
+                    where: {
+                        id: req.params
+                    },
+                    raw: true
+                })
+                .then((data) => {
+                    if (!data) {
+                        return res.status(404).json({
+                            status: 'Success',
+                            message: 'Product already deleted'
+                        })
+                    }
+
+                    Products.destroy({
+                        where: {
+                            id: req.params
+                        }
+                    })
+
+                    return res.status(200).json({
+                        status: 'Success',
+                        message: 'Deleting product success'
+                    })
+                })
+        } catch (err) {
+            return res.status(500).json({
+                status: 'Fail',
+                message: 'Delete product failed'
+            })
+        }
+    }
 }
 
 module.exports = new ProductController;
