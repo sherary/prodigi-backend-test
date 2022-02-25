@@ -1,10 +1,15 @@
 const { Users } = require('../models');
 const paginate = require('../helpers/paginate');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+require('dotenv').config();
+const SECRET = process.env.SECRET;
 
 const UserController = class {
     async register (req, res) {
         try {
             let user_id = ''
+            req.body.password = await bcrypt.hash(req.body.password, 10);
             await Users.create(req.body)
                 .then((data) => {
                     user_id = data.id
@@ -16,20 +21,45 @@ const UserController = class {
                 },
                 raw: true
             })
-                .then((result) => {
+                .then((data) => {
+                    const token = jwt.sign(req.body, SECRET, {
+                        expiresIn: 60 * 60 * 24
+                    });
+
                     return res.status(200).json({
                         status: 'Success',
                         message: 'Register success!',
-                        data: result
+                        token: token,
+                        data: data,
                     })
                 })
         } catch (err) {
-            console.log(err)
             return res.status(500).json({
                 status: 'Fail',
                 message: 'Register account failed'
             })
         }
+    }
+
+    async login (req, res) {
+        const user = await Users.findOne({
+            where: {
+                username: req.user.username
+            },
+            raw: true,
+        })
+
+        return res.status(200).json({
+            message: 'Success logging in',
+            data: user,
+            token: req.user.token
+        })
+    }
+
+    async logout (req, res) {
+        return res.status(200).json({
+            message: 'Success logging out',
+        })
     }
 
     async all (req, res) {

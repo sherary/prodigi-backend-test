@@ -49,6 +49,27 @@ const AdminController = class {
         }
     }
 
+    async login (req, res) {
+        const user = await Admins.findOne({
+            where: {
+                username: req.user.username
+            },
+            raw: true,
+        })
+
+        return res.status(200).json({
+            message: 'Success logging in',
+            data: user,
+            token: req.user.token
+        })
+    }
+
+    async logout (req, res) {
+        return res.status(200).json({
+            message: 'Success logging out',
+        })
+    }
+
     async one (req, res) {
         try {
             const user = await Admins.findOne({
